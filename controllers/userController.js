@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const getRandomAvatar = require("../randomAvatar");
 require("dotenv").config();
 
 module.exports.createSession = async (req, res) => {
@@ -16,6 +17,10 @@ module.exports.createSession = async (req, res) => {
         token: jwt.sign(user.toJSON(), process.env.SECRET_KEY, {
           expiresIn: "1h",
         }),
+        user: {
+          username: user.name,
+          avatar: user.avatar,
+        },
       },
     });
   } catch (err) {
@@ -29,11 +34,13 @@ module.exports.createSession = async (req, res) => {
 module.exports.register = async (req, res) => {
   try {
     let existingUser = await User.findOne({ email: req.body.email });
+    const avatar = getRandomAvatar();
     if (!existingUser) {
       const newUser = new User({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
+        avatar,
       });
       await newUser.save();
       return res.status(200).json({
