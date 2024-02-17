@@ -6,6 +6,8 @@ router.get("/", (req, res) => {
 });
 
 router.use("/api/user", require("./user"));
+router.use("/api/chat", require("./chat"));
+router.use("/api/message", require("./messages"));
 
 console.log("Routes are running fine");
 module.exports = router;

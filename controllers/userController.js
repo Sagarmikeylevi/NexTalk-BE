@@ -18,6 +18,7 @@ module.exports.createSession = async (req, res) => {
           expiresIn: "1h",
         }),
         user: {
+          id: user._id,
           username: user.name,
           avatar: user.avatar,
         },
@@ -56,6 +57,27 @@ module.exports.register = async (req, res) => {
     console.log("******", err);
     return res.status(500).json({
       error: "Error in registation",
+    });
+  }
+};
+
+module.exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, { password: 0 });
+    return res.status(200).json({
+      message: "Fetched all users successfully",
+      data: {
+        users: users.map((user) => ({
+          id: user._id,
+          username: user.name,
+          avatar: user.avatar,
+        })),
+      },
+    });
+  } catch (err) {
+    console.log("******", err);
+    return res.status(500).json({
+      message: "Internal Server Error",
     });
   }
 };
